@@ -31,8 +31,8 @@ SynthDef(\drop, {
 SynthDef(\dropverb, {
 	|in=0, out=0|
 	var sig = In.ar(in, 1);
-	sig = CombN.ar(sig, 3, 0.25, 2.5);
-	sig = FreeVerb.ar(sig, 0.7, 0.5, 0.7);
+	sig = CombN.ar(sig, 1.5, 0.25, 1.4);
+	sig = sig + FreeVerb.ar(sig, 0.7, 0.5, 0.7);
 	Out.ar(out, sig);
 }).add;
 

@@ -19,7 +19,7 @@ var y2 = 0.5;
 ~bass = Pbind(
 	\instrument, \grain_cello,
 	\group, ~grp_syn,
-	\out, ~array_bus_out,
+	\out, ~array_bus_out[0],
 	\octave, Pwrand([3,4],[7,3].normalizeSum, inf)*12,
 	\midinote, Pkey(\octave) + 0,
 	\sndbuf, Pindex(~samples, Pkey(\midinote)-36),
@@ -34,7 +34,7 @@ var y2 = 0.5;
 ~violin = Pbind(
 	\instrument, \grain_cello,
 	\group, ~grp_syn,
-	\out, ~array_bus_out,
+	\out, ~array_bus_out[0],
 	\octave, Pxrand([4,5,6],inf),
 	\midinote, Pkey(\octave)*12 + 0 + Pxrand( Scale.majorPentatonic.degrees, inf) ,
 	\sndbuf, Pindex(~samples, Pkey(\midinote)-36),
@@ -46,7 +46,6 @@ var y2 = 0.5;
 );
 
 ~score_violin = Ppar([~bass, ~violin,~violin,~violin]).asEventStreamPlayer;
-
 
 // FM score (w/ major Pentatonic)
 ~score_fm = Pbind(

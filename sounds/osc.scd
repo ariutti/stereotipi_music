@@ -5,10 +5,10 @@
 ~ctrl.sendMsg("/method/sound", 1);
 ~ctrl.sendMsg("/method/sound", 0);
 ~ctrl.sendMsg("/method/clicked", 0);
-~ctrl.sendMsg("/method/released", 3);
+~ctrl.sendMsg("/method/released", 0);
 
 
-// clicked function
+// CLICKED function
 ~osc_clicked = OSCFunc({
 	| msg, time, addr, recvPort |
 	postln("Clicked (index" + msg[1] + ").");
@@ -16,10 +16,12 @@
 		{
 			//"true condition".postln;
 			// fade out the soundscape volume for the 'i' speaker
-			~array_pbinds_drop[ msg[1] ].reset;
-			// play the 'clicked' sound
-			~array_pbinds_drop[ msg[1] ].play(quant:0);
+			//~array_outputStages[ 0 ].set(\level, 0.05);
 			~array_outputStages[ msg[1] ].set(\level, 0.05);
+			// play the 'clicked' sound
+			~array_pbinds_drop[ msg[1] ].reset;
+			~array_pbinds_drop[ msg[1] ].play(quant:0);
+
 		},
 		{
 			//"false condition".postln;
@@ -30,7 +32,7 @@
 
 
 
-// released function
+// RELEASED function
 ~osc_released = OSCFunc({
 	| msg, time, addr, recvPort |
 	postln("Relesaed (index" + msg[1] + ").");
@@ -49,17 +51,12 @@
 
 
 
-// TODO: add a "statup sound" OSC function
+// STARTUP funciton
 ~osc_sound = OSCFunc({
 	| msg, time, addr, recvPort |
 	postln("Sound (argument " ++ msg[1] ++ ")" );
 
 	if( msg[1]==1, {
-		// set all output stage volume to 1
-		~array_outputStages.do {
-			| synth |
-			synth.set(\level, 1);
-		};
 		// start all noises
 		~array_noises.do {
 			| synth |
@@ -70,6 +67,11 @@
 		// start fmcalls
 		~score_fm.play;
 		// start distant bird pbind
+		// set all output stage volume to 1
+		~array_outputStages.do {
+			| synth |
+			synth.set(\level, 1);
+		};
 	},
 	{
 		// set all output stage volume to 1
