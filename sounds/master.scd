@@ -1,27 +1,32 @@
 // STEREOTIPI Master!
 
 (
+s = Server.local;
+//s.options.device = "ASIO : US-16x08 ASIO";
+
+// Set here the total number of indipendent speakers
+// solve the fact that a number greater than 4 can cause the error:
+// JackDriver: exception in real time: alloc failed, increase server's memory allocation (e.g. via ServerOptions)
+~nspeaker = 2;
+
+// increase the memory used for audio
+//s.options.memSize = s.options.memSize * 100;
+s.options.numOutputBusChannels_(~nspeaker);
+s.options.numInputBusChannels_(2);
+
 s.waitForBoot({
 
-	// Set here the total number of indipendent speakers
-	// solve the fact that a number greater than 4 can cause the error:
-	// JackDriver: exception in real time: alloc failed, increase server's memory allocation (e.g. via ServerOptions)
-	~nspeaker = 2;
-
-	// increase the memory used for audio
-	s.options.memSize = s.options.memSize * 1024;
-	s.options.memSize;
-	s.options.numOutputBusChannels_(~nspeaker);
-	s.options.numInputBusChannels_(2);
-
-	s.meter;
-	s.plotTree;
+	//s.meter;
+	//s.plotTree;
+	//s.freqscope;
 
 	// create groups
 	~grp_dropverb = Group.new();
 	~grp_drops = Group.new(~grp_dropverb, \addBefore);
 	~grp_out = Group.new();
 	~grp_syn = Group.new(~grp_out, \addBefore);
+
+	s.sync;
 
 	"synths.scd".loadRelative;
 	s.sync;
@@ -61,7 +66,7 @@ s.waitForBoot({
 			\out, ~array_aux_dropverb[i],
 			\amp, 0.3,
 			\drywet, Pgeom(1, 0.8, inf),
-			\degree, Prand(Scale.majorPentatonic.degrees, inf),
+			\degree, Prand(Scale.majorPentatonic.degrees, inf).trace,
 			\octave, Pseq([ 4, Pwrand([5, 6, 7],[1,4,6].normalizeSum, inf)],inf),
 			\dur, Pwrand([0.25, 0.33, 0.125], [6,3, 8].normalizeSum, 3 )
 		).asEventStreamPlayer;
@@ -95,6 +100,9 @@ s.waitForBoot({
 		"new noise created".postln;
 		Synth(\fnoise, [\out, ~array_bus_out[0], \gate,0], target:~grp_syn);
 	});
+
+	s.sync;
+
 
 	"score.scd".loadRelative;
 	s.sync;

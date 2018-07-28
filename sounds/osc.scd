@@ -2,12 +2,6 @@
 
 ~ctrl = NetAddr("127.0.0.1", 15300);
 
-~ctrl.sendMsg("/method/sound", 1);
-~ctrl.sendMsg("/method/sound", 0);
-~ctrl.sendMsg("/method/clicked", 0);
-~ctrl.sendMsg("/method/released", 0);
-
-
 // CLICKED function
 ~osc_clicked = OSCFunc({
 	| msg, time, addr, recvPort |
@@ -18,6 +12,7 @@
 			// fade out the soundscape volume for the 'i' speaker
 			//~array_outputStages[ 0 ].set(\level, 0.05);
 			~array_outputStages[ msg[1] ].set(\level, 0.05);
+
 			// play the 'clicked' sound
 			~array_pbinds_drop[ msg[1] ].reset;
 			~array_pbinds_drop[ msg[1] ].play(quant:0);
@@ -57,15 +52,19 @@
 	postln("Sound (argument " ++ msg[1] ++ ")" );
 
 	if( msg[1]==1, {
+
 		// start all noises
 		~array_noises.do {
 			| synth |
 			synth.set(\gate, 1);
 		};
+
 		// start violins
 		~score_violin.play;
+
 		// start fmcalls
 		~score_fm.play;
+
 		// start distant bird pbind
 		// set all output stage volume to 1
 		~array_outputStages.do {
@@ -79,16 +78,21 @@
 			| synth |
 			synth.set(\level, 0);
 		};
+
 		// stop all noises
 		~array_noises.do {
 			| synth |
 			synth.set(\gate, 0);
 		};
+
 		// stop violins
 		~score_violin.stop;
+
 		// stop fmcalls
 		~score_fm.stop;
+
 		// stop distant bird pbind
+		// TODO
 	});
 }, "/method/sound", recvPort:15300);
 

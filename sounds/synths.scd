@@ -4,23 +4,28 @@
 
 // OUTPUT STAGE: is a volume controlled synth
 SynthDef(\outputStage, {
-	|in=0, out=0, level=0, lagTime=5 |
+	|in=0, out=0, amp=1.0,
+	level=0, lagTime=5
+	freq = 1500, rq=1, db=(-3)|
 	var sig;
 	sig = In.ar( in );
-	sig = sig * VarLag.kr( level, lagTime );
+	sig = MidEQ.ar(sig, freq, rq, db);
+	sig = sig * VarLag.kr( level, lagTime ) * amp;
 	Out.ar(out, sig);
 }).add;
 
 
 // GUI sounds: drop & dropverb
 // these are the sound you hear when you make a "click"
-
 SynthDef(\drop, {
-	arg out=0, drywet=0, freq=440, cutoff=880,
+	|
+	out=0, drywet=0, freq=440, cutoff=880,
 	bwr=0.01, sus=0.5, tatk=0.001, tdecay=0.04,
-	tsus=0.5, trel=0.5, amp=0.25;
+	tsus=0.5, trel=0.5, amp=0.25
+	|
 	var sig, env;
-	env = EnvGen.kr(Env([0, 1, sus, sus*0.8, 0], [tatk, tdecay, tsus, trel]), doneAction:2 );
+	//env = EnvGen.kr(Env([0, 1, sus, sus*0.8, 0], [tatk, tdecay, tsus, trel]), doneAction:2 );
+	env = EnvGen.kr(Env.perc(), doneAction:2 );
 	sig = SinOsc.ar(freq) * env * amp;
 	//sig = BLowPass.ar(sig, XLine.kr(freq, freq*3, tdecay), 100);
 	//Out.ar(dryOut, sig * drywet);
@@ -31,8 +36,8 @@ SynthDef(\drop, {
 SynthDef(\dropverb, {
 	|in=0, out=0|
 	var sig = In.ar(in, 1);
-	sig = CombN.ar(sig, 1.5, 0.25, 1.4);
-	sig = sig + FreeVerb.ar(sig, 0.7, 0.5, 0.7);
+	//sig = sig + CombN.ar(sig, 1.5, 0.25, 1.4);
+	//sig = FreeVerb.ar(sig, 0.7, 0.5, 0.7);
 	Out.ar(out, sig);
 }).add;
 
@@ -69,13 +74,17 @@ SynthDef(\grain_cello, {
 
 // SOUNDSCAPE: fm calls
 SynthDef(\fmcalls, {
-	|amp=0.25, pos=0, midinote=67, dlytime=0.25, dcytime=1.4, timbre=1, atk=0.001, rls=0.01, out=0|
+	|
+	amp=0.25, pos=0, midinote=67,
+	dlytime=0.25, dcytime=1.4,
+	timbre=1, atk=0.001, rls=0.01, out=0
+	|
 	var sig, env, freq;
 	env = EnvGen.ar(Env.perc(atk, rls));
 	//sig = SinOsc.ar( midinote.midicps )*env;
 	freq = midinote.midicps;
 	sig = PMOsc.ar(freq, freq*10, timbre) * env;
-	sig = sig + AllpassN.ar(sig, 1.5, dlytime, dcytime);
+	sig = sig + AllpassN.ar(sig, 8, dlytime, dcytime);
 	sig = LPF.ar(sig, 5000);
 	sig = sig * amp;
 	DetectSilence.ar(sig, 0.0001, 0.4, doneAction:2);
