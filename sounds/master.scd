@@ -7,7 +7,7 @@ s = Server.local;
 // Set here the total number of indipendent speakers
 // solve the fact that a number greater than 4 can cause the error:
 // JackDriver: exception in real time: alloc failed, increase server's memory allocation (e.g. via ServerOptions)
-~nspeaker = 2;
+~nspeaker = 8;
 
 // increase the memory used for audio
 //s.options.memSize = s.options.memSize * 100;
@@ -15,10 +15,6 @@ s.options.numOutputBusChannels_(~nspeaker);
 s.options.numInputBusChannels_(2);
 
 s.waitForBoot({
-
-	//s.meter;
-	//s.plotTree;
-	//s.freqscope;
 
 	// create groups
 	~grp_dropverb = Group.new();

@@ -67,7 +67,11 @@ SynthDef(\grain_cello, {
 
 	sig = sig * amp * env;
 	//sig = BRF.ar(sig, 1500, 1);
-	Out.ar(out, sig!~nspeaker);
+
+	// mono output on all speakers
+	//Out.ar(out, sig!~nspeaker);
+	// spacialized output
+	Out.ar(out, PanAz.ar( ~nspeaker, sig, LFNoise2.kr(0.1).range(-1,1)) );
 }).add;
 
 
@@ -76,7 +80,7 @@ SynthDef(\grain_cello, {
 SynthDef(\fmcalls, {
 	|
 	amp=0.25, pos=0, midinote=67,
-	dlytime=0.25, dcytime=1.4,
+	maxdlytime=3.1, dlytime=0.25, dcytime=1.4,
 	timbre=1, atk=0.001, rls=0.01, out=0
 	|
 	var sig, env, freq;
@@ -84,7 +88,7 @@ SynthDef(\fmcalls, {
 	//sig = SinOsc.ar( midinote.midicps )*env;
 	freq = midinote.midicps;
 	sig = PMOsc.ar(freq, freq*10, timbre) * env;
-	sig = sig + AllpassN.ar(sig, 8, dlytime, dcytime);
+	sig = sig + AllpassN.ar(sig, maxdlytime, dlytime, dcytime);
 	sig = LPF.ar(sig, 5000);
 	sig = sig * amp;
 	DetectSilence.ar(sig, 0.0001, 0.4, doneAction:2);
@@ -98,7 +102,7 @@ SynthDef(\fmcalls, {
 // SOUNDSCAPE: filter noise
 
 SynthDef(\fnoise, {
-	|out=0, amp = 0.25, gate=0, nchannels=2|
+	|out=0, amp = 0.125, gate=0, nchannels=2|
 	var sig,freq, env;
 	env = EnvGen.kr(Env.asr(5,1,5),gate,doneAction:0);
 	sig = WhiteNoise.ar();
@@ -122,4 +126,18 @@ SynthDef(\distant_bird, {
 	sig = BPF.ar(sig, freq, 0.001);
 	sig = sig * amp;
 	Out.ar(0, Pan2.ar(sig, pos));
+}).add;
+
+SynthDef(\piano, {
+	|
+	sndbuf, vel=64, gate=1, rate=1,
+	amp=1.0, out=0
+	|
+	var sig, env, level;
+	env = EnvGen.kr(Env.asr(), gate, doneAction:2);
+	sig = PlayBuf.ar(2, sndbuf, rate*BufRateScale.ir( sndbuf ));
+	level = LinExp.kr(vel, 1, 127, 0.01, 1);
+	sig = sig * env * level * amp;
+	sig = FreeVerb.ar(sig, 0.7, 0.6, 0.7);
+	Out.ar(out, sig);
 }).add;

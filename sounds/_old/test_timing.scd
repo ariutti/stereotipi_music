@@ -54,7 +54,23 @@ z.stop;
 
 
 (
+SynthDef(\test, {
+	var sig = SinOsc.ar(440)*EnvGen.ar(Env.perc(), doneAction:2);
+	Out.ar(0, sig!2);
+}).add;
+)
+
+x = Synth(\test);
+
+(
 z = Pbind(
+	\instrument, \test,
 	\dur, Pseq([0.1], 1)
 ).play(quant:0);
 )
+
+
+TempoClock.default //default clock
+TempoClock.default.tempo //get tempo in beats per second.
+//Note that 1 bps means 1 beat = 1 second, so the wait timings above are in seconds if 1 bps
+TempoClock.default.tempo_(60/60);

@@ -7,8 +7,21 @@ var y2 = 0.5;
 
 // load sound from disk.
 ~samples = Array.new;
-~folder = PathName.new("C:/Users/nicola/Music/philarmonic_orchestra/cello/renamed/wav/");
-//~folder = PathName.new("/home/nicola/Musica/philarmonic_orchestra/cello/renamed/wav/");
+Platform.case(
+    \osx,       {
+		"OSX".postln;
+
+	},
+    \linux,     {
+		"Linux".postln;
+		~folder = PathName.new("/home/nicola/Musica/philarmonic_orchestra/cello/renamed/wav/");
+	},
+    \windows,   {
+		"Windows".postln;
+		~folder = PathName.new("C:/Users/nicola/Music/philarmonic_orchestra/cello/renamed/wav/");
+	}
+);
+
 ~folder.entries.do({
 	arg path;
 	//path.postln
@@ -27,7 +40,7 @@ var y2 = 0.5;
 	\rt, 1.01, // the first sample is a bit out of tune
 	\atk, 5,
 	\rls, 5,
-	\amp, 0.40,
+	\amp, 0.60,
 	\type, Pwrand([\note, \Rest], [7,1].normalizeSum, inf)
 );
 
@@ -45,7 +58,16 @@ var y2 = 0.5;
 	\amp, (((Pkey(\midinote)-56 )/ 24) * (y2-y1) + y1),
 );
 
-~score_violin = Ppar([~bass,~violin,~violin,~violin]).asEventStreamPlayer;
+
+//~score_violin = Ppar([~bass,~violin,~violin,~violin]).asEventStreamPlayer;
+// let's try with more violins (12 of them)
+~score_violin = Ppar([
+	~bass,
+	~violin,~violin,~violin,~violin,
+	~violin,~violin,~violin,~violin,
+	~violin,~violin,~violin,~violin
+]
+).asEventStreamPlayer;
 
 // FM score (w/ major Pentatonic)
 ~score_fm = Pbind(
@@ -55,16 +77,63 @@ var y2 = 0.5;
 	\out, Pindex(~array_bus_out, Prand((0..~nspeaker-1), inf)),
 	\octave, 4, // +53
 	\degree, Prand(Scale.majorPentatonic.degrees, inf),
-	\dlytime, Prand([3, 4, 8], inf).reciprocal,
+	\dlytime, 3.reciprocal, //Prand([3, 4, 8], inf).reciprocal,
 	\dynamic, Pexprand(0.01, 0.9, inf),
 	\timbre, Pkey(\dynamic).reciprocal,
 	\atk, Pkey(\dynamic) * 0.1,
 	\rls, Pkey(\dynamic) * 0.5,
-	\amp, Pwhite(0.15, 0.2, inf),
+	\amp, 0.2, //Pwhite(0.15, 0.2, inf),
 	//\pos, Prand((0..~nspeaker-1), inf).trace, //(-0.8, 0.8),
 	\intervallo, Prand([10,7,9],inf),
 	\dur, (Pkey(\dynamic).reciprocal).min(Pkey(\intervallo)),
 ).asEventStreamPlayer;
+
+
+
+
+// Piano
+~piano_samples = Array.new;
+Platform.case(
+    \osx,       {
+		"OSX".postln;
+
+	},
+    \linux,     {
+		"Linux".postln;
+		~piano_folder = PathName.new("/home/nicola/Musica/neatonk_misstereopiano/med/");
+	},
+    \windows,   {
+		"Windows".postln;
+		~piano_folder = PathName.new("C:/Users/nicola/Music/TODO");
+	}
+);
+
+~piano_folder.entries.do({
+	| path |
+	//path.postln;
+	~piano_samples = ~piano_samples.add(Buffer.read(s, path.fullPath));
+});
+~piano_samples.size;
+
+~score_piano_part = Pbind(
+	\instrument, \piano,
+	\out, 0,
+	\degree, Pxrand(Scale.majorPentatonic.degrees, inf),
+	\root, 0,
+	\octave, Prand([5, 6, 7],inf),
+	\midinote, Pkey(\octave)*12 + Pkey(\root) + Pkey(\degree),
+	//\midinote, 60,
+	\sndbuf, Pindex( ~piano_samples, Pkey(\midinote)-23, inf),
+	\vel, Pwhite(64, 100, inf),
+	\amp, 0.9,
+	\dur, Prand([2, 1, 1/2, 1/4, 1/8], inf),
+	\legato, 2,
+	\type, Pwrand( [\note, \Rest], [4,6].normalizeSum, inf),
+);
+
+~score_piano = Ppar([ ~score_piano_part, ~score_piano_part ]).asEventStreamPlayer;
+
+
 
 
 /*

@@ -14,8 +14,8 @@
 			~array_outputStages[ msg[1] ].set(\level, 0.05);
 
 			// play the 'clicked' sound
-			~array_pbinds_drop[ msg[1] ].reset;
-			~array_pbinds_drop[ msg[1] ].play(quant:0);
+			//~array_pbinds_drop[ msg[1] ].reset;
+			~array_pbinds_drop[ msg[1] ].play(doReset:true, quant:0);
 
 		},
 		{
@@ -24,7 +24,6 @@
 		}
 	);
 }, "/method/clicked", recvPort:15300);
-
 
 
 // RELEASED function
@@ -71,6 +70,12 @@
 			| synth |
 			synth.set(\level, 1);
 		};
+
+		// start distant bird pbind
+		// TODO
+
+		// piano start
+		~score_piano.play;
 	},
 	{
 		// set all output stage volume to 1
@@ -93,6 +98,9 @@
 
 		// stop distant bird pbind
 		// TODO
+
+		// piano stop
+		~score_piano.stop;
 	});
 }, "/method/sound", recvPort:15300);
 
