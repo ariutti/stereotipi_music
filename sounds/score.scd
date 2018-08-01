@@ -5,8 +5,9 @@
 var y1 = 1;
 var y2 = 0.5;
 
-// load sound from disk.
-~samples = Array.new;
+// load samples from disk.
+~cello_samples = Array.new;
+~piano_samples = Array.new;
 Platform.case(
     \osx,       {
 		"OSX".postln;
@@ -14,20 +15,22 @@ Platform.case(
 	},
     \linux,     {
 		"Linux".postln;
-		~folder = PathName.new("/home/nicola/Musica/philarmonic_orchestra/cello/renamed/wav/");
+		~cello_folder = PathName.new("/home/nicola/Musica/philarmonic_orchestra/cello/renamed/wav/");
+		~piano_folder = PathName.new("/home/nicola/Musica/neatonk_misstereopiano/med/");
 	},
     \windows,   {
 		"Windows".postln;
-		~folder = PathName.new("C:/Users/nicola/Music/philarmonic_orchestra/cello/renamed/wav/");
+		~cello_folder = PathName.new("C:/Users/nicola/Music/philarmonic_orchestra/cello/renamed/wav/");
+		~piano_folder = PathName.new("C:/Users/nicola/Music/TODO");
 	}
 );
 
-~folder.entries.do({
+~cello_folder.entries.do({
 	arg path;
 	//path.postln
-	~samples = ~samples.add(Buffer.read(s, path.fullPath));
+	~cello_samples = ~cello_samples.add(Buffer.read(s, path.fullPath));
 });
-//~samples.size;
+//~cello_samples.size;
 
 ~bass = Pbind(
 	\instrument, \grain_cello,
@@ -35,7 +38,7 @@ Platform.case(
 	\out, ~array_bus_out[0],
 	\octave, Pwrand([3,4],[7,3].normalizeSum, inf)*12,
 	\midinote, Pkey(\octave) + 0,
-	\sndbuf, Pindex(~samples, Pkey(\midinote)-36),
+	\sndbuf, Pindex(~cello_samples, Pkey(\midinote)-36),
 	\dur, Pwhite(15, 20),
 	\rt, 1.01, // the first sample is a bit out of tune
 	\atk, 5,
@@ -50,7 +53,7 @@ Platform.case(
 	\out, ~array_bus_out[0],
 	\octave, Pxrand([4,5,6],inf),
 	\midinote, Pkey(\octave)*12 + 0 + Pxrand( Scale.majorPentatonic.degrees, inf) ,
-	\sndbuf, Pindex(~samples, Pkey(\midinote)-36),
+	\sndbuf, Pindex(~cello_samples, Pkey(\midinote)-36),
 	\dur, Pwhite(10, 15),
 	\atk, 5,
 	\rls, 5,
@@ -92,7 +95,7 @@ Platform.case(
 
 
 // Piano
-~piano_samples = Array.new;
+/*
 Platform.case(
     \osx,       {
 		"OSX".postln;
@@ -107,6 +110,7 @@ Platform.case(
 		~piano_folder = PathName.new("C:/Users/nicola/Music/TODO");
 	}
 );
+*/
 
 ~piano_folder.entries.do({
 	| path |
@@ -117,7 +121,8 @@ Platform.case(
 
 ~score_piano_part = Pbind(
 	\instrument, \piano,
-	\out, 0,
+	\group, ~grp_syn,
+	\out, Pindex(~array_bus_out, Prand((0..~nspeaker-1), inf)),
 	\degree, Pxrand(Scale.majorPentatonic.degrees, inf),
 	\root, 0,
 	\octave, Prand([5, 6, 7],inf),

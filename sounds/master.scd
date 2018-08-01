@@ -1,5 +1,11 @@
 // STEREOTIPI Master!
 
+/*
+We are using these samples:
+* cello samples by Philarmonia Orchestra (http://www.philharmonia.co.uk/explore/sound_samples);
+* piano samples by neatonk (MISStereoPiano pack on freesound https://freesound.org/people/neatonk/packs/9133/);
+*/
+
 (
 s = Server.local;
 //s.options.device = "ASIO : US-16x08 ASIO";

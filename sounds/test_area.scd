@@ -1,7 +1,7 @@
 ~ctrl.sendMsg("/method/sound", 1);
 ~ctrl.sendMsg("/method/sound", 0);
-~ctrl.sendMsg("/method/clicked", 0);
-~ctrl.sendMsg("/method/released", 0);
+~ctrl.sendMsg("/method/clicked", 1);
+~ctrl.sendMsg("/method/released", 1);
 
 (
 s.meter;
@@ -17,7 +17,3 @@ s.freqscope;
 )
 
 s.latency;
-
-Decay2
-PlayN
-OffsetOut

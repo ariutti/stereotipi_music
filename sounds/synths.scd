@@ -139,5 +139,7 @@ SynthDef(\piano, {
 	level = LinExp.kr(vel, 1, 127, 0.01, 1);
 	sig = sig * env * level * amp;
 	sig = FreeVerb.ar(sig, 0.7, 0.6, 0.7);
-	Out.ar(out, sig);
+	//Out.ar(out, sig);
+	// Need to mix down the stereo instrument to a mono output
+	Out.ar(out, Mix.ar(sig) );
 }).add;
