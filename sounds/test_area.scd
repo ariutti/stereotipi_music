@@ -1,19 +1,29 @@
-~ctrl.sendMsg("/method/sound", 1);
-~ctrl.sendMsg("/method/sound", 0);
-~ctrl.sendMsg("/method/clicked", 1);
-~ctrl.sendMsg("/method/released", 1);
-
+// TEST AREA
 (
 s.meter;
 s.plotTree;
 s.freqscope;
 )
 
+
+~ctrl.sendMsg("/method/sound", 1);
+~ctrl.sendMsg("/method/sound", 0);
+~ctrl.sendMsg("/method/clicked", 0);
+~ctrl.sendMsg("/method/released", 0);
+
+
 (
-8.do {
+// click all
+~nspeaker.do {
+	|item|
+	~ctrl.sendMsg("/method/clicked", item);
+}
+)
+
+(
+// release all
+~nspeaker.do {
 	|item|
 	~ctrl.sendMsg("/method/released", item);
 }
 )
-
-s.latency;
