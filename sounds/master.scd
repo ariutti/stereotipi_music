@@ -13,11 +13,12 @@ s = Server.local;
 // Set here the total number of indipendent speakers
 // solve the fact that a number greater than 4 can cause the error:
 // JackDriver: exception in real time: alloc failed, increase server's memory allocation (e.g. via ServerOptions)
-~nspeaker = 6;
+~nspeaker = 3;
+~speaker_offset = 2;
 
 // increase the memory used for audio
 //s.options.memSize = s.options.memSize * 100;
-s.options.numOutputBusChannels_(~nspeaker);
+s.options.numOutputBusChannels_(~nspeaker + ~speaker_offset);
 s.options.numInputBusChannels_(2);
 
 s.waitForBoot({
@@ -51,7 +52,7 @@ s.waitForBoot({
 		Synth(\dropverb,
 			[
 				\in, ~array_aux_dropverb[i],
-				\out, i
+				\out, i + ~speaker_offset
 			],
 			target:~grp_dropverb
 		);
@@ -86,7 +87,7 @@ s.waitForBoot({
 		Synth(\outputStage,
 			[
 				\in, ~array_bus_out[i],
-				\out, i
+				\out, i + ~speaker_offset
 			],
 			target:~grp_out
 		);
@@ -116,10 +117,3 @@ s.waitForBoot({
 
 });
 )
-
-
-
-/*
-// TEST ///////////////////////////////////////
-
-*/
