@@ -2,49 +2,6 @@
 
 ~ctrl = NetAddr("127.0.0.1", 15300);
 
-// CLICKED function
-~osc_clicked = OSCFunc({
-	| msg, time, addr, recvPort |
-	postln("Clicked (index" + msg[1] + ").");
-	if( msg[1]>=0 && msg[1]<~nspeaker,
-		{
-			//"true condition".postln;
-			// fade out the soundscape volume for the 'i' speaker
-			//~array_outputStages[ 0 ].set(\level, 0.05);
-			~array_outputStages[ msg[1] ].set(\level, 0.05);
-
-			// play the 'clicked' sound
-			//~array_pbinds_drop[ msg[1] ].reset;
-			~array_pbinds_drop[ msg[1] ].play(doReset:true, quant:0);
-
-		},
-		{
-			//"false condition".postln;
-			"Invalid index".postln;
-		}
-	);
-}, "/method/clicked", recvPort:15300);
-
-
-// RELEASED function
-~osc_released = OSCFunc({
-	| msg, time, addr, recvPort |
-	postln("Relesaed (index" + msg[1] + ").");
-	if( msg[1]>=0 && msg[1]<~nspeaker,
-		{
-			//"true condition".postln;
-			// fade in the soundscape volume for the 'i' speaker
-			~array_outputStages[ msg[1] ].set(\level, 1);
-		},
-		{
-			//"false condition".postln;
-			"Invalid index".postln;
-		}
-	);
-}, "/method/released", recvPort:15300);
-
-
-
 // STARTUP funciton
 ~osc_sound = OSCFunc({
 	| msg, time, addr, recvPort |
@@ -103,6 +60,52 @@
 		~score_piano.stop;
 	});
 }, "/method/sound", recvPort:15300);
+
+
+// CLICKED function
+~osc_clicked = OSCFunc({
+	| msg, time, addr, recvPort |
+	postln("Clicked (index" + msg[1] + ").");
+	if( msg[1]>=0 && msg[1]<~nspeaker,
+		{
+			//"true condition".postln;
+			// fade out the soundscape volume for the 'i' speaker
+			//~array_outputStages[ 0 ].set(\level, 0.05);
+			~array_outputStages[ msg[1] ].set(\level, 0.05);
+
+			// play the 'clicked' sound
+			//~array_pbinds_drop[ msg[1] ].reset;
+			~array_pbinds_drop[ msg[1] ].play(doReset:true, quant:0);
+
+		},
+		{
+			//"false condition".postln;
+			"Invalid index".postln;
+		}
+	);
+}, "/method/clicked", recvPort:15300);
+
+
+// RELEASED function
+~osc_released = OSCFunc({
+	| msg, time, addr, recvPort |
+	postln("Relesaed (index" + msg[1] + ").");
+	if( msg[1]>=0 && msg[1]<~nspeaker,
+		{
+			//"true condition".postln;
+			// fade in the soundscape volume for the 'i' speaker
+			~array_outputStages[ msg[1] ].set(\level, 1);
+		},
+		{
+			//"false condition".postln;
+			"Invalid index".postln;
+		}
+	);
+}, "/method/released", recvPort:15300);
+
+
+
+
 
 
 

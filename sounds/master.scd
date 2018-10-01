@@ -9,6 +9,7 @@ We are using these samples:
 (
 s = Server.local;
 //s.options.device = "ASIO : US-16x08 ASIO";
+s.options.device = "ASIO : MOTU Audio ASIO";
 
 // Set here the total number of indipendent speakers
 // solve the fact that a number greater than 4 can cause the error:
