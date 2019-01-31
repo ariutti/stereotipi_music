@@ -20,8 +20,10 @@ Platform.case(
 	},
     \windows,   {
 		"Windows".postln;
-		~cello_folder = PathName.new("C:/Users/nicola/Music/philarmonic_orchestra/cello/renamed/wav/");
-		~piano_folder = PathName.new("C:/Users/nicola/Music/TODO");
+		//~cello_folder = PathName.new("C:/Users/nicola/Music/philarmonic_orchestra/cello/renamed/wav/");
+		//~piano_folder = PathName.new("C:/Users/nicola/Music/TODO");
+		~cello_folder = PathName.new("C:/stereotipi_music/samples/cello");
+		~piano_folder = PathName.new("C:/stereotipi_music/samples/piano");
 	}
 );
 
