@@ -13,6 +13,11 @@ We are using these samples:
 
 ## Order of execution
 
+### PANPHONICS SETTINGS
+
+PRE00
+VOL30
+
 ### Calibration
 
 First of all you must calibrate your audio setup: use files contained in _calibration_ folder. Simply load the _master_ patch and execute it. Then you can use functions contained inside the _test_area_ file.
